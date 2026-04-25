@@ -1,8 +1,8 @@
 # Esp32-air-quality-monitor-digital-clock
 ESP32 indoor monitor using AHT21 (temp/humidity) and ENS160 (TVOC, AQI, eCO₂ estimate). Data is shown on a 2" ST7789 SPI TFT with a clock. A capacitive tap button switches between two pages: Air Quality and Temperature/Humidity.
 
-#  Air Quality Monitor — Design 2  
-ESP32 • ENS160 • AHT21 • 2" TFT LCD
+#  Air Quality Monitor  
+ESP32 • ENS160 • AHT21 • 2" TFT LCD 
 
 A compact indoor air‑quality monitoring system using the ENS160 gas sensor and AHT21 temperature/humidity sensor, powered by an ESP32 and displayed on a 2‑inch TFT LCD.
 
