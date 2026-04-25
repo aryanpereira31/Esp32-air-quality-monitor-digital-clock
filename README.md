@@ -35,8 +35,8 @@ A **2‑inch TFT LCD** presents all air‑quality metrics clearly and visually.
 ### Power  
 Powered through a **5V USB‑C** port, compatible with chargers, power banks, and USB ports.
 
-##  Capacitive Touch Button — Page Switching
+### Capacitive Touch Button — Page Switching
 
-This design includes a capacitive touch input connected to the ESP32.  
-Touching the pad switches the TFT display between **Page 1** (Air Quality) and **Page 2** (Temperature & 
+ includes a capacitive touch input connected to the ESP32.  
+Touching the pad switches the TFT display between **Page 1** (Air Quality) and **Page 2** (Temperature & Humidity) 
 
