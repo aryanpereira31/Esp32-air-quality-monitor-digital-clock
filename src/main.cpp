@@ -81,7 +81,7 @@ void drawDashboard(const struct tm &timeInfo) {
   strftime(dateText, sizeof(dateText), "%a, %d %b %Y", &timeInfo);
 
   tft.fillRect(16, 66, 208, 64, TFT_BLACK);
-  tft.setTextColor(TFT_GREEN, TFT_BLACK);
+  tft.setTextColor(TFT_BLUE, TFT_BLACK);
   tft.setTextSize(3);
   tft.drawString(timeText, 120, 100, 2);
   tft.setTextSize(1);
@@ -123,6 +123,7 @@ void setup() {
 
 void loop() {
   static uint32_t lastUpdateMs = 0;
+  static int lastDrawnSecond = -1;
 
   if (WiFi.status() != WL_CONNECTED) {
     return;
@@ -140,6 +141,12 @@ void loop() {
     Serial.println("Time not ready");
     return;
   }
+
+  if (timeInfo.tm_sec == lastDrawnSecond) {
+    return;
+  }
+
+  lastDrawnSecond = timeInfo.tm_sec;
 
   drawDashboard(timeInfo);
 
