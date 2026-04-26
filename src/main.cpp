@@ -4,12 +4,12 @@
 #include <WiFi.h>
 
 #define USER_SETUP_LOADED
-#include "../library files/SPI user setup/User_Setup.h"
+#include "../library files/User_Setup.h"
 #include <TFT_eSPI.h>
 
 constexpr char WIFI_SSID[] = "SKYSBUBQ";
 constexpr char WIFI_PASSWORD[] = "Dwy3ye5QaSpk";
-constexpr char TIME_ZONE[] = "UTC0";
+constexpr char TIME_ZONE[] = "UTC-1";
 constexpr char NTP_SERVER_1[] = "pool.ntp.org";
 constexpr char NTP_SERVER_2[] = "time.nist.gov";
 
