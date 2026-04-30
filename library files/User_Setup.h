@@ -31,9 +31,9 @@
 // ###### ESP32 Pins ######
 #define TFT_MOSI 23
 #define TFT_SCLK 18
-#define TFT_CS   15
-#define TFT_DC    2
-#define TFT_RST   4
+#define TFT_CS    5
+#define TFT_DC   16
+#define TFT_RST  17
 
 // ###### Fonts ######
 #define LOAD_GLCD

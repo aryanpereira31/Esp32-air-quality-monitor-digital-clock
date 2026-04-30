@@ -1,0 +1,35 @@
+1) Power + Ground (common to all)
+
+ESP32 3V3 → TFT VCC, Sensor VCC
+ESP32 GND → TFT GND, Sensor GND
+Keep all grounds common.
+
+2) ENS160 + AHT21 combo board (I²C)
+Use ESP32 default I²C pins:
+
+ESP32 GPIO21 (SDA) → Sensor SDA
+ESP32 GPIO22 (SCL) → Sensor SCL
+3V3 → VIN/VCC
+GND → GND
+
+3) ST7789 240x320 TFT (SPI, 4-wire)
+Use ESP32 VSPI pins (very common and compatible with libraries):
+
+SPI bus:
+
+ESP32 GPIO18 (SCK) → TFT SCL/SCK
+ESP32 GPIO23 (MOSI) → TFT SDA/MOSI/DIN
+(Usually no MISO on 4-wire TFT: leave MISO unconnected)
+
+Control pins (choose free GPIOs):
+
+ESP32 GPIO5 → TFT CS
+ESP32 GPIO16 → TFT DC (A0/RS)
+ESP32 GPIO17 → TFT RST (RESET)
+ESP32 3V3 → TFT BL/LED (Backlight) or (GPIO4 for PWM Brightness Control)
+
+4) Capacitive touch button module
+
+3V3 → VCC
+GND → GND
+ESP32 GPIO27 → IO
