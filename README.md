@@ -1,39 +1,73 @@
-#  Air Quality Monitor  
-ESP32 • ENS160 • AHT21 • 2" TFT LCD 
+# Air Quality Monitor
+ESP32 • ENS160 • AHT21 • 2" TFT LCD
 
-A compact indoor air‑quality monitoring system using the ENS160 gas sensor and AHT21 temperature/humidity sensor, powered by an ESP32 and displayed on a 2‑inch TFT LCD.
-
----
-
-##  Components Used
-
-| Category         | Component       | Description                                                                 |
-|------------------|-----------------|-----------------------------------------------------------------------------|
-| **Sensors**      | **ENS160**      | Multi‑gas sensor measuring VOCs and providing IAQ index.                    |
-|                  | **AHT21**       | Temperature & humidity sensor used for environmental compensation.          |
-| **Microcontroller** | **ESP32**    | Main controller handling sensor readings and TFT display output.            |
-| **Output**       | **2-inch TFT LCD** | Displays IAQ, TVOC, eCO₂, temperature, and humidity.                    |
-| **Power**        | **USB‑C (5V)**  | System powered via a standard 5V USB‑C input.                               |
+A compact indoor air-quality monitor built with an ESP32, an ENS160 gas sensor, and an AHT21 temperature/humidity sensor. The device shows live readings on a 2-inch TFT LCD and uses a touch input to switch between display pages.
 
 ---
 
-## 📝 Description
+## Components Used
 
-### Sensors  
-The **ENS160** detects VOCs and calculates **IAQ**, **TVOC**, and **eCO₂**.  
-The **AHT21** measures **temperature** and **humidity**, providing compensation data for accurate gas readings.
+| Category | Component | Description |
+|---|---|---|
+| Sensors | ENS160 | Multi-gas sensor that provides IAQ, TVOC, and eCO2 values. |
+| Sensors | AHT21 | Temperature and humidity sensor used for environmental compensation. |
+| Microcontroller | ESP32 | Main controller handling Wi-Fi, NTP time sync, sensor reads, and display updates. |
+| Display | 2-inch TFT LCD | Shows the clock, sensor values, and page titles. |
+| Input | Capacitive touch pin | Switches between the two display pages. |
+| Power | USB-C 5V | Standard 5V power input for the system. |
 
-### Microcontroller  
-The **ESP32** reads both sensors via I²C, processes the data, and updates the TFT display in real time.
+---
 
-### Display  
-A **2‑inch TFT LCD** presents all air‑quality metrics clearly and visually.
+## Overview
 
-### Power  
-Powered through a **5V USB‑C** port, compatible with chargers, power banks, and USB ports.
+The ESP32 connects to Wi-Fi, syncs time with NTP, reads both sensors over I2C, and refreshes the TFT screen once per second. The UI is split into a simple status screen during startup and two main pages after the device is ready.
 
-### Capacitive Touch Button — Page Switching
+---
 
- includes a capacitive touch input connected to the ESP32.  
-Touching the pad switches the TFT display between **Page 1** (Air Quality) and **Page 2** (Temperature & Humidity) 
+## Page Layout
+
+### Startup / Status Screen
+
+| Area | Content |
+|---|---|
+| Header | Project name: `ESP32 Air Monitor` |
+| Main message | Wi-Fi, NTP, or sensor initialization status |
+| Frame | Centered status panel with two lines of text |
+
+### Page 1 - Air Quality
+
+| Area | Content |
+|---|---|
+| Header | `ESP32 Air Monitor` + `Page 1 - Air Quality` |
+| Clock | Time shown near the top of the screen |
+| Indicator | Wi-Fi status dot in the top-right corner |
+| Metric 1 | IAQ value |
+| Metric 2 | TVOC in ppb |
+| Metric 3 | eCO2 in ppm |
+
+### Page 2 - Climate
+
+| Area | Content |
+|---|---|
+| Header | `ESP32 Air Monitor` + `Page 2 - Climate` |
+| Clock | Time shown near the top of the screen |
+| Indicator | Wi-Fi status dot in the top-right corner |
+| Metric 1 | Temperature in C |
+| Metric 2 | Humidity in %RH |
+
+### Page Switching
+
+Touching the capacitive input toggles between the Air Quality page and the Climate page.
+
+---
+
+## Description
+
+The ENS160 provides air-quality values such as IAQ, TVOC, and eCO2. The AHT21 supplies temperature and humidity readings, which are also used to compensate the gas sensor for better accuracy. All values are rendered on the TFT display in real time.
+
+---
+
+## Build Notes
+
+The TFT setup is configured through the custom User_Setup.h file in the library files folder. The project is built with PlatformIO and uses the TFT_eSPI, SparkFun ENS160, and Adafruit AHTX0 libraries.
 
