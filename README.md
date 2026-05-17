@@ -71,3 +71,14 @@ The ENS160 provides air-quality values such as IAQ, TVOC, and eCO2. The AHT21 su
 
 The TFT setup is configured through the custom User_Setup.h file in the library files folder. The project is built with PlatformIO and uses the TFT_eSPI, SparkFun ENS160, and Adafruit AHTX0 libraries.
 
+---
+
+## Libraries Used
+
+| Library | Purpose |
+|---|---|
+| [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI) | Drives the 2" TFT display and drawing functions. |
+| [SparkFun Indoor Air Quality Sensor - ENS160](https://github.com/sparkfun/SparkFun_Indoor_Air_Quality_Sensor-ENS160_Arduino_Library) | Reads IAQ, TVOC, and eCO2 values from the ENS160 sensor. |
+| [Adafruit AHTX0](https://github.com/adafruit/Adafruit_AHTX0) | Reads temperature and humidity from the AHT21 sensor. |
+| Arduino core for ESP32 | Provides Wi-Fi, I2C, timing, and serial support used by the firmware. |
+
