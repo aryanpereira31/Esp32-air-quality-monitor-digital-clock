@@ -22,7 +22,8 @@ constexpr uint8_t TOUCH_PIN = 27;
 
 constexpr uint32_t WIFI_TIMEOUT_MS = 15000;
 constexpr uint32_t TIME_POLL_MS = 1000;
-constexpr uint32_t SENSOR_POLL_MS = 1000;
+constexpr uint32_t INITIAL_SENSOR_POLL_MS = 60UL * 1000UL;
+constexpr uint32_t SENSOR_POLL_MS = 10UL * 60UL * 1000UL;
 constexpr uint32_t TOUCH_DEBOUNCE_MS = 250;
 
 constexpr uint8_t PAGE_AIR_QUALITY = 0;
@@ -44,6 +45,20 @@ struct SensorData {
 };
 
 SensorData sensorData;
+
+void logSensorCsv() {
+  const time_t epochSeconds = time(nullptr);
+  Serial.printf(
+      "%ld,%.2f,%.2f,%u,%u,%u,%u,%u\n",
+      static_cast<long>(epochSeconds),
+  sensorData.ahtValid ? sensorData.temperatureC : 0.0f,
+  sensorData.ahtValid ? sensorData.humidityPercent : 0.0f,
+      sensorData.ensValid ? sensorData.tvocPpb : 0,
+      sensorData.ensValid ? sensorData.eco2Ppm : 0,
+      sensorData.ensValid ? sensorData.iaq : 0,
+      sensorData.ahtValid ? 1 : 0,
+      sensorData.ensValid ? 1 : 0);
+}
 
 uint8_t currentPage = PAGE_AIR_QUALITY;
 uint8_t lastDrawnPage = 255;
@@ -306,17 +321,7 @@ void pollSensors() {
     sensorData.ensValid = false;
   }
 
-  Serial.printf(
-      "Time:%s Page:%u AHT:%s ENS:%s T:%.1fC H:%.1f%% TVOC:%uppb eCO2:%uppm IAQ:%u\n",
-      clockReady ? lastTimeText : "--:--",
-      currentPage + 1,
-      ahtOk ? "OK" : "ERR",
-      ensOk ? "OK" : "ERR",
-      sensorData.temperatureC,
-      sensorData.humidityPercent,
-      sensorData.tvocPpb,
-      sensorData.eco2Ppm,
-      sensorData.iaq);
+  logSensorCsv();
 }
 
 void handleTouchButton() {
@@ -342,17 +347,17 @@ void setup() {
   drawStatusScreen("WiFi connecting...", "Please wait");
 
   if (!connectWiFi()) {
-    drawStatusScreen("WiFi failed", "Check credentials");
-    Serial.println("WiFi connection failed");
-    return;
+    drawStatusScreen("WiFi failed", "Continuing offline");
+    Serial.println("WiFi connection failed; continuing offline");
   }
 
-  drawStatusScreen("NTP syncing...", "Please wait");
+  if (WiFi.status() == WL_CONNECTED) {
+    drawStatusScreen("NTP syncing...", "Please wait");
 
-  if (!syncClock()) {
-    drawStatusScreen("NTP sync failed", "Check internet");
-    Serial.println("NTP sync failed");
-    return;
+    if (!syncClock()) {
+      drawStatusScreen("NTP sync failed", "Using uptime only");
+      Serial.println("NTP sync failed; using uptime only");
+    }
   }
 
   drawStatusScreen("Sensors init...", "Please wait");
@@ -363,9 +368,13 @@ void setup() {
     Serial.println("One or more sensors failed init; continuing with placeholders");
   }
 
+  // Wait one minute before the first sensor sample, then keep the 10-minute cadence.
+  lastSensorPollMs = millis() - (SENSOR_POLL_MS - INITIAL_SENSOR_POLL_MS);
+
   renderPageTemplate();
   lastDrawnPage = currentPage;
 
+  Serial.println("epoch,tempC,humidityRH,tvocPpb,eco2Ppm,iaq,ahtValid,ensValid");
   Serial.println("System ready");
 }
 
