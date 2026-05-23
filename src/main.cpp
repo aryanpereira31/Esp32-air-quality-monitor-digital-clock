@@ -46,20 +46,6 @@ struct SensorData {
 
 SensorData sensorData;
 
-void logSensorCsv() {
-  const time_t epochSeconds = time(nullptr);
-  Serial.printf(
-      "%ld,%.2f,%.2f,%u,%u,%u,%u,%u\n",
-      static_cast<long>(epochSeconds),
-  sensorData.ahtValid ? sensorData.temperatureC : 0.0f,
-  sensorData.ahtValid ? sensorData.humidityPercent : 0.0f,
-      sensorData.ensValid ? sensorData.tvocPpb : 0,
-      sensorData.ensValid ? sensorData.eco2Ppm : 0,
-      sensorData.ensValid ? sensorData.iaq : 0,
-      sensorData.ahtValid ? 1 : 0,
-      sensorData.ensValid ? 1 : 0);
-}
-
 uint8_t currentPage = PAGE_AIR_QUALITY;
 uint8_t lastDrawnPage = 255;
 
@@ -134,18 +120,14 @@ bool initSensors() {
   bool ok = true;
 
   if (!aht.begin()) {
-    Serial.println("AHT21 init failed");
     ok = false;
   }
 
   if (ens160.begin(Wire, ENS160_ADDRESS_HIGH)) {
     ensInitialized = true;
-    Serial.println("ENS160 init OK at 0x53");
   } else if (ens160.begin(Wire, ENS160_ADDRESS_LOW)) {
     ensInitialized = true;
-    Serial.println("ENS160 init OK at 0x52");
   } else {
-    Serial.println("ENS160 init failed on 0x53 and 0x52");
     ensInitialized = false;
     ok = false;
   }
@@ -321,7 +303,6 @@ void pollSensors() {
     sensorData.ensValid = false;
   }
 
-  logSensorCsv();
 }
 
 void handleTouchButton() {
@@ -336,8 +317,6 @@ void handleTouchButton() {
 }
 
 void setup() {
-  Serial.begin(115200);
-
   pinMode(TOUCH_PIN, INPUT);
 
   tft.init();
@@ -348,7 +327,6 @@ void setup() {
 
   if (!connectWiFi()) {
     drawStatusScreen("WiFi failed", "Continuing offline");
-    Serial.println("WiFi connection failed; continuing offline");
   }
 
   if (WiFi.status() == WL_CONNECTED) {
@@ -356,7 +334,6 @@ void setup() {
 
     if (!syncClock()) {
       drawStatusScreen("NTP sync failed", "Using uptime only");
-      Serial.println("NTP sync failed; using uptime only");
     }
   }
 
@@ -364,9 +341,7 @@ void setup() {
 
   Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
   const bool sensorInitOk = initSensors();
-  if (!sensorInitOk) {
-    Serial.println("One or more sensors failed init; continuing with placeholders");
-  }
+  (void)sensorInitOk;
 
   // Wait one minute before the first sensor sample, then keep the 10-minute cadence.
   lastSensorPollMs = millis() - (SENSOR_POLL_MS - INITIAL_SENSOR_POLL_MS);
@@ -374,8 +349,7 @@ void setup() {
   renderPageTemplate();
   lastDrawnPage = currentPage;
 
-  Serial.println("epoch,tempC,humidityRH,tvocPpb,eco2Ppm,iaq,ahtValid,ensValid");
-  Serial.println("System ready");
+  // System ready (serial logging removed)
 }
 
 void loop() {

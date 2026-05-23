@@ -1,0 +1,103 @@
+Pseudocode for src/main.cpp
+
+This file is a compact version of the pseudocode suitable for pasting into Word.
+
+-- Globals / Configuration
+Define WiFi credentials, NTP servers, I2C pins, touch pin, timeouts, polling intervals, and page identifiers.
+
+-- Objects
+TFT_eSPI tft;         // display
+Adafruit_AHTX0 aht;   // temperature + humidity sensor
+SparkFun_ENS160 ens;  // gas / air quality sensor
+
+-- SensorData struct
+Holds: temperatureC, humidityPercent, tvocPpb, eco2Ppm, iaq, ahtValid, ensValid
+
+-- State variables
+currentPage, lastDrawnPage, lastTimeText[], clockReady, lastTimePollMs, lastSensorPollMs, lastTouchToggleMs, lastTouchLevel
+
+logSensorCsv() - Removed: CSV/Serial logging was removed from the implementation; no CSV output is produced.
+
+Display helper functions
+drawTimeValue(timeText) - clear time area on TFT; draw time text centered
+drawWiFiDot() - draw small green/ red dot depending on WiFi.status()
+centerText(text, x, y, font, textColor, backgroundColor) - helper to draw centered text with background
+drawStatusScreen(line1, line2) - draw full-screen status with title and two lines of status text
+
+connectWiFi()
+- set WiFi mode to STA
+- begin WiFi with SSID and password
+- wait up to WIFI_TIMEOUT_MS for connection
+- return connected boolean
+
+syncClock()
+- call configTzTime(TIME_ZONE, NTP_SERVER_1, NTP_SERVER_2)
+- wait up to WIFI_TIMEOUT_MS for getLocalTime()
+- return success boolean
+
+initSensors()
+- begin AHT sensor; set ok flag if success
+- attempt ENS160 init at two I2C addresses; set ensInitialized
+- if ENS found, set standard operating mode
+- draw placeholder time and WiFi dot on TFT
+- return whether sensors initialized OK
+
+drawHeader(pageTitle) - clear screen, draw app title and framed content box; draw page title and horizontal rule; draw initial time placeholder
+
+drawMetricRow(label, value, y, color) - draw one line of label (left) and value (right) with background
+
+renderPageTemplate()
+- if currentPage == PAGE_AIR_QUALITY: draw header for Air Quality page and placeholder metric rows
+  else (PAGE_TEMP_HUMIDITY): draw header for Climate page and placeholder metric rows
+- draw time and wifi dot if clockReady or placeholder
+
+updateClockDisplay()
+- try to get local time; if unavailable set clockReady=false and return
+- format time as HH:MM into currentTime
+- if currentTime == lastTimeText and lastDrawnPage == currentPage: return (no redraw needed)
+- copy currentTime into lastTimeText and call drawTimeValue(); draw WiFi dot
+
+updateAirQualityPage()
+- for each metric (IAQ, TVOC, eCO2): if sensorData.ensValid: format numeric value; else: set "N/A"; call drawMetricRow for each
+
+updateClimatePage()
+- for Temperature and Humidity: if sensorData.ahtValid: format numeric; else: "N/A"; call drawMetricRow for each
+
+updatePageData() - call updateAirQualityPage or updateClimatePage based on currentPage
+
+pollSensors()
+- read humidity + temperature events from AHT; if success: update sensorData.temperatureC, humidityPercent, ahtValid
+- if ENS initialized and AHT valid: set temp/RH compensation on ENS160
+- if ENS initialized: read ENS160 flags; if flags indicate valid data: update tvocPpb, eco2Ppm, iaq, ensValid; else ensValid = false
+- (No CSV/Serial logging)
+
+handleTouchButton()
+- read touch pin level
+- detect rising edge with debounce; toggle currentPage between PAGE_AIR_QUALITY and PAGE_TEMP_HUMIDITY
+- update lastTouchLevel and lastTouchToggleMs
+
+setup()
+- (No Serial console initialization — logging removed)
+- pinMode(TOUCH_PIN, INPUT)
+- init TFT, rotation, clear screen
+- drawStatusScreen("WiFi connecting...", "Please wait")
+- attempt connectWiFi(); on failure show "WiFi failed" but continue
+- if WiFi connected: drawStatusScreen("NTP syncing...", "Please wait"); attempt syncClock(); on failure show "NTP sync failed" and continue
+- drawStatusScreen("Sensors init...", "Please wait")
+- Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN)
+- call initSensors(); if not OK continue with placeholders
+- set lastSensorPollMs so first poll happens after INITIAL_SENSOR_POLL_MS
+- renderPageTemplate() and set lastDrawnPage
+- (No CSV/Serial output)
+
+loop() - main program loop
+- handleTouchButton()
+- if currentPage != lastDrawnPage: renderPageTemplate(), update lastDrawnPage
+- if now - lastTimePollMs >= TIME_POLL_MS: updateClockDisplay()
+- if now - lastSensorPollMs >= SENSOR_POLL_MS: pollSensors(); updatePageData()
+
+Error and fallback behavior
+- Continue running with placeholders if WiFi, NTP, or sensors fail
+- Show "N/A" for unavailable sensor values
+
+End of pseudocode
