@@ -10,8 +10,8 @@
 #include "../library files/User_Setup.h"
 #include <TFT_eSPI.h>
 
-constexpr char WIFI_SSID[] = "OnePlus13";
-constexpr char WIFI_PASSWORD[] = "tastyninjin";
+constexpr char WIFI_SSID[] = "WIFI_NAME";
+constexpr char WIFI_PASSWORD[] = "Password_WIFI";
 constexpr char TIME_ZONE[] = "UTC-1";
 constexpr char NTP_SERVER_1[] = "pool.ntp.org";
 constexpr char NTP_SERVER_2[] = "time.nist.gov";
