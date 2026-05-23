@@ -35,6 +35,9 @@
 #define TFT_DC   16
 #define TFT_RST  17
 
+// No TFT touch controller is connected; define this to silence TFT_eSPI's warning.
+#define TOUCH_CS -1
+
 // ###### Fonts ######
 #define LOAD_GLCD
 #define LOAD_FONT2

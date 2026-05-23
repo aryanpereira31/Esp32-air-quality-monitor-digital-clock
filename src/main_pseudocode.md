@@ -5,6 +5,7 @@ This document is a readable pseudocode translation of `src/main.cpp`.
 ## Globals / Configuration
 - WiFi credentials, NTP servers
 - I2C SDA/SCL pins, touch pin
+- `TOUCH_CS` defined as `-1` so TFT_eSPI touch support stays disabled and the warning is silenced
 - TIMEOUT and POLL interval constants
 - Page identifiers (Air Quality, Climate)
 

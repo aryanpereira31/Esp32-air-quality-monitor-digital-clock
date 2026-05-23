@@ -3,7 +3,7 @@ Pseudocode for src/main.cpp
 This file is a compact version of the pseudocode suitable for pasting into Word.
 
 -- Globals / Configuration
-Define WiFi credentials, NTP servers, I2C pins, touch pin, timeouts, polling intervals, and page identifiers.
+Define WiFi credentials, NTP servers, I2C pins, touch pin, `TOUCH_CS=-1` to disable TFT_eSPI touch support, timeouts, polling intervals, and page identifiers.
 
 -- Objects
 TFT_eSPI tft;         // display

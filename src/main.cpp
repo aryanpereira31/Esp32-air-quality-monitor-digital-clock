@@ -22,8 +22,7 @@ constexpr uint8_t TOUCH_PIN = 27;
 
 constexpr uint32_t WIFI_TIMEOUT_MS = 15000;
 constexpr uint32_t TIME_POLL_MS = 1000;
-constexpr uint32_t INITIAL_SENSOR_POLL_MS = 60UL * 1000UL;
-constexpr uint32_t SENSOR_POLL_MS = 10UL * 60UL * 1000UL;
+constexpr uint32_t SENSOR_POLL_MS = 2000;
 constexpr uint32_t TOUCH_DEBOUNCE_MS = 250;
 
 constexpr uint8_t PAGE_AIR_QUALITY = 0;
@@ -257,7 +256,6 @@ void updateClimatePage() {
     snprintf(line, sizeof(line), "N/A");
   }
   drawMetricRow("Humidity", line, 196, TFT_SKYBLUE);
-
 }
 
 void updatePageData() {
@@ -271,14 +269,13 @@ void updatePageData() {
 void pollSensors() {
   sensors_event_t humidityEvent;
   sensors_event_t tempEvent;
-  bool ahtOk = false;
-  bool ensOk = false;
+
+  sensorData.ensValid = false;
 
   if (aht.getEvent(&humidityEvent, &tempEvent)) {
     sensorData.temperatureC = tempEvent.temperature;
     sensorData.humidityPercent = humidityEvent.relative_humidity;
     sensorData.ahtValid = true;
-    ahtOk = true;
   } else {
     sensorData.ahtValid = false;
   }
@@ -295,14 +292,8 @@ void pollSensors() {
       sensorData.eco2Ppm = ens160.getECO2();
       sensorData.iaq = ens160.getAQI();
       sensorData.ensValid = true;
-      ensOk = true;
     }
   }
-
-  if (!ensOk) {
-    sensorData.ensValid = false;
-  }
-
 }
 
 void handleTouchButton() {
@@ -343,13 +334,11 @@ void setup() {
   const bool sensorInitOk = initSensors();
   (void)sensorInitOk;
 
-  // Wait one minute before the first sensor sample, then keep the 10-minute cadence.
-  lastSensorPollMs = millis() - (SENSOR_POLL_MS - INITIAL_SENSOR_POLL_MS);
+  // Start live sensor polling immediately.
+  lastSensorPollMs = millis() - SENSOR_POLL_MS;
 
   renderPageTemplate();
   lastDrawnPage = currentPage;
-
-  // System ready (serial logging removed)
 }
 
 void loop() {
