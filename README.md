@@ -14,7 +14,7 @@ A compact indoor air-quality monitor built with an ESP32, an ENS160 gas sensor, 
 | Sensors | ENS160 | Multi-gas sensor that provides IAQ, TVOC, and eCO2 values. |
 | Sensors | AHT21 | Temperature and humidity sensor used for environmental compensation. |
 | Microcontroller | ESP32 | Main controller handling Wi-Fi, NTP time sync, sensor reads, and display updates. |
-| Display | 2-inch TFT LCD | Shows the clock, sensor values, and page titles. |
+| Display | 2-inch TFT LCD ST7789 Driver IC | Shows the clock, sensor values, and page titles. |
 | Input | Capacitive touch button | Switches between the two display pages. |
 | Power | USB-C 5V | Standard 5V power input for the system. |
 
