@@ -1,6 +1,8 @@
 # Air Quality Monitor
 ESP32 • ENS160 • AHT21 • 2" TFT LCD
 
+This repository is a PlatformIO project — build and upload with PlatformIO (see `platformio.ini`).
+
 A compact indoor air-quality monitor built with an ESP32, an ENS160 gas sensor, and an AHT21 temperature/humidity sensor. The device shows live readings on a 2-inch TFT LCD and uses a touch input to switch between display pages.
 
 ---
