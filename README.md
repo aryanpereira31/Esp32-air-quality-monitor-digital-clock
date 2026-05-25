@@ -13,7 +13,7 @@ A compact indoor air-quality monitor built with an ESP32, an ENS160 gas sensor, 
 | Sensors | AHT21 | Temperature and humidity sensor used for environmental compensation. |
 | Microcontroller | ESP32 | Main controller handling Wi-Fi, NTP time sync, sensor reads, and display updates. |
 | Display | 2-inch TFT LCD | Shows the clock, sensor values, and page titles. |
-| Input | Capacitive touch pin | Switches between the two display pages. |
+| Input | Capacitive touch button | Switches between the two display pages. |
 | Power | USB-C 5V | Standard 5V power input for the system. |
 
 ---
@@ -57,13 +57,26 @@ The ESP32 connects to Wi-Fi, syncs time with NTP, reads both sensors over I2C, a
 
 ### Page Switching
 
-Touching the capacitive input toggles between the Air Quality page and the Climate page.
+Touching the Capacitive touch button toggles between the Air Quality page and the Climate page.
 
 ---
 
 ## Description
 
 The ENS160 provides air-quality values such as IAQ, TVOC, and eCO2. The AHT21 supplies temperature and humidity readings, which are also used to compensate the gas sensor for better accuracy. All values are rendered on the TFT display in real time.
+
+---
+
+
+### Air Quality Index (AQI) Reference
+
+| AQI Level | Air Quality | eCO2 (ppm) | TVOC (ppb) | Meaning |
+|---:|---|---:|---:|---|
+| 1 | Very Good | < 600 | < 150 | Clean air — excellent ventilation |
+| 2 | Good | 600–800 | 150–300 | Acceptable indoor air quality |
+| 3 | Moderate | 800–1000 | 300–500 | Ventilation recommended |
+| 4 | Poor | 1000–1500 | 500–1000 | Reduced comfort and focus |
+| 5 | Very Poor | > 1500 | > 1000 | Immediate ventilation required |
 
 ---
 
